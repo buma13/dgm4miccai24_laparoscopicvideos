@@ -4,7 +4,7 @@
 ### Python packages
 `pip install -r requirements.txt`
 
-### Github Repos
+### External repos used in our experiments
 - ControlVideo https://github.com/YBYBZhang/ControlVideo
 - CMMD-pytorch https://github.com/sayakpaul/cmmd-pytorch (for fidelity evaluation)
 - Rendezvouz (RDV) https://github.com/CAMMA-public/rendezvous (for factual correctness evaluation)
