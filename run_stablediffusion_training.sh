@@ -1,9 +1,9 @@
 export MODEL_NAME="runwayml/stable-diffusion-v1-5"
 
 ### CholecT50 runs
-export TRAIN_DIR="/home/bwlki/ivan/laparodiffusion/data/sd_datasets/train_cholect50+80"
-export OUTPUT_DIR="/home/bwlki/ivan/laparodiffusion/models/sd_checkpoints/11LR1e-5-cholect50+80-txt"
-export RUN_NAME="LR1e-5-cholect50+80-txt"
+export TRAIN_DIR="<training dataset directory>"
+export OUTPUT_DIR="<path to save resulting SD model>"
+export RUN_NAME="SD_laparoscopic"
 export EPOCHS=10
 export LR=1e-5
 
@@ -27,7 +27,6 @@ accelerate launch models/train_text_to_image.py \
   --lr_warmup_steps=0 \
   --output_dir=$OUTPUT_DIR \
   --validation_epochs=1 \
-  --report_to="wandb" \
   --validation_prompts "carlot-triangle-dissection" "grasper grasp gallbladder in carlot-triangle-dissection" \
                         "grasper grasp gallbladder and hook in carlot-triangle-dissection" \
                         "grasper and hook in carlot-triangle-dissection" \

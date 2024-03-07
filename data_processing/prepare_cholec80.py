@@ -8,6 +8,8 @@ import sys
 import ast
 
 
+### Extracts prompts from Cholec80 and creates training dataset folder structure for StableDiffusion
+
 def prepare_cholec80(cholec80_path, save_path, video_ids):
     with open(os.path.join(save_path, "metadata.csv"), 'a', encoding='UTF8') as f:
         # header = ['file_name', 'text']

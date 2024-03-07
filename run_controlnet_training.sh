@@ -1,7 +1,7 @@
 
-export MODEL_DIR=<StableDiffusion path>
-export OUTPUT_DIR=<path to save resulting ControlNet model>
-export TRAIN_DIR=<training dataset directory>
+export MODEL_DIR="<StableDiffusion path>"
+export OUTPUT_DIR="<path to save resulting ControlNet model>"
+export TRAIN_DIR="<training dataset directory>"
 
 accelerate launch models/train_controlnet.py \
  --pretrained_model_name_or_path=$MODEL_DIR \
