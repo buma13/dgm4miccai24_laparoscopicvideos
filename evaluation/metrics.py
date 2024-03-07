@@ -1,5 +1,4 @@
 import torch
-from pytorch_msssim import ssim
 from cleanfid import fid
 import os
 import numpy as np

@@ -2,7 +2,6 @@ from metrics import *
 import pandas as pd
 import torch
 import json
-from build_fid_datasets import build_fid_datasets
 
 ### script for running fidelity evaluation, saves a json of the results at the end
 
