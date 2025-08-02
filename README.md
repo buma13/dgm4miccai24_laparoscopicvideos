@@ -2,7 +2,8 @@
 ---
 ## Prerequisites
 ### Python packages
-`pip install -r requirements.txt`
+Update requirments.txt and this command according to the cuda version you are using.
+`pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu124`
 
 ### External repos used in our experiments
 - ControlVideo https://github.com/YBYBZhang/ControlVideo
@@ -29,7 +30,7 @@ There are some placeholders in all scripts, replace them with your own values (s
 
 
 ### ControlNet Training
-1. Run `evaluation/create_controlnet_datasets.py` (once for train and once for test).
+1. Run `data_processing/create_controlnet_dataset.py` (once for train and once for test).
 2. Run training with `run_controlnet_training.sh`.
 
 ## Inference Instructions

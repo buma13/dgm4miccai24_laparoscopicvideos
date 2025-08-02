@@ -60,9 +60,9 @@ def prepare_cholec80(cholec80_path, save_path, video_ids):
 
 
 if __name__ == "__main__":
-    cholec80_path = "data/Cholec80"
-    save_path = ""
-    
+    cholec80_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/cholec80"
+    save_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/custom_cholec_combined/train"
+
     # videos that are not included in CholecT50
     video_ids = ["03", "07", "09", "11", "16",
                 "17", "19", "20", "21", "24",
@@ -70,7 +70,7 @@ if __name__ == "__main__":
                 "38", "39", "41", "44", "45",
                 "46", "53", "54", "55", "58",
                 "59", "61", "63", "64", "67",
-                "69", "71", "72", "76", "77"] 
+                "69", "71", "72", "76", "77"]
     print(video_ids)
     prepare_cholec80(cholec80_path, save_path, video_ids)
 

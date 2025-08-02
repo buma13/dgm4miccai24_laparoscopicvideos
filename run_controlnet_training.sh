@@ -1,9 +1,9 @@
 
-export MODEL_DIR="<StableDiffusion path>"
-export OUTPUT_DIR="<path to save resulting ControlNet model>"
+export MODEL_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/StableDiffusion"
+export OUTPUT_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/ControlNet"
 export TRAIN_DIR="<training dataset directory>"
 
-accelerate launch models/train_controlnet.py \
+accelerate launch model_scripts/train_controlnet.py \
  --pretrained_model_name_or_path=$MODEL_DIR \
  --output_dir=$OUTPUT_DIR \
  --train_data_dir=$TRAIN_DIR \
@@ -14,6 +14,6 @@ accelerate launch models/train_controlnet.py \
  --dataloader_num_workers=16 \
  --checkpointing_steps=1000 \
  #--resume_from_checkpoint="latest" \
- #--report_to="wandb" 
- #--validation_image 
+ #--report_to="wandb"
+ #--validation_image
  #--validation_prompt

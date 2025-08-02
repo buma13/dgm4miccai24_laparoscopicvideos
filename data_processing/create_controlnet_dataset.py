@@ -14,13 +14,12 @@ import shutil
 
 ### Creates ControlNet dataset folder structure by annotating the dataset used in StableDiffusion.
 
+SD_DATASET_PATH = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/custom_cholec_combined/train/" # path to dataset used for StableDiffusion training
+DEST_PATH = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/" # path to save destination
+cholect50_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/CholecT50"
+cholec80_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/cholec80"
 
-SD_DATASET_PATH = "" # path to dataset used for StableDiffusion training
-DEST_PATH = "" # path to save destination
-cholect50_path = ""
-cholec80_path = ""
-
-model = YOLO('') # insert path of finetuned YOLOv8 model here
+model = YOLO('/mnt/projects/mlmi/dmcaf_laparoscopic/cholecseg8k-yolov8/runs/segment/train/weights/best.pt') # insert path of finetuned YOLOv8 model here
 
 vids = os.listdir(SD_DATASET_PATH)
 with jsonlines.open(os.path.join(DEST_PATH,'train.jsonl'), 'w') as writer:
@@ -28,7 +27,7 @@ with jsonlines.open(os.path.join(DEST_PATH,'train.jsonl'), 'w') as writer:
         if "VID" in v:
             os.makedirs(os.path.join(DEST_PATH,"images",v), exist_ok=True)
             results = model(SD_DATASET_PATH+v, save=False,
-                            device='cuda:1', stream=True, show_labels=False, verbose=False)
+                            device='cuda', stream=True, show_labels=False, verbose=False)
             masks_path = os.path.join(DEST_PATH,"conditioning_images/{}/".format(v))
             images_path = os.path.join(DEST_PATH,"images/{}/".format(v))
             if not os.path.exists(masks_path):
@@ -57,24 +56,24 @@ with jsonlines.open(os.path.join(DEST_PATH,'train.jsonl'), 'w') as writer:
                 else:
                     print(f"{img_path}: no annotation file found! skipping image")
                     continue
-                            
+
                 if result.masks:
-                    #option to crossval number of predicted masks with cholect50 tool presence labels, if they're not equal skip the image       
+                    #option to crossval number of predicted masks with cholect50 tool presence labels, if they're not equal skip the image
                     # if n_instruments != len(result.masks):
                     #     continue
 
                     masks = result.masks.data
                     tool_mask = (torch.any(masks, dim=0).int()
                                  * 255).cpu().numpy()
-                    
+
                 # option to include negative examples containing no tools
                 # elif n_instruments==0:
-                #     tool_mask = np.zeros((128, 128))    
+                #     tool_mask = np.zeros((128, 128))
                 else:
-                    continue   
+                    continue
                 line_dict = {"text": text, "image": 'images/'+img_path,
                                 "conditioning_image": 'conditioning_images/'+img_path}
                 writer.write(line_dict)
                 cv2.imwrite(masks_path+img_path.split("/")[1], tool_mask)
                 shutil.copyfile(os.path.join(SD_DATASET_PATH, img_path), os.path.join(DEST_PATH, "images", img_path))
-                
+

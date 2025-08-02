@@ -38,14 +38,14 @@ def prepare_cholect50(cholect50_path, save_path):
                 img = cv2.resize(img, (128, 128), interpolation=cv2.INTER_LINEAR)
                 os.makedirs(os.path.join(save_path, file_name.split("/")[0]), exist_ok=True)
                 cv2.imwrite(os.path.join(save_path, file_name), img)
-                
-                
+
+
 def create_testset(data_path, dest_path):
-    
+
     if os.path.isfile(os.path.join(dest_path, 'metadata.csv')):
         print("metadata.csv already exists!")
         return
-    
+
     os.makedirs(dest_path, exist_ok=True)
     train_metadata = pd.read_csv(os.path.join(data_path, "metadata.csv"))
 
@@ -66,10 +66,10 @@ def create_testset(data_path, dest_path):
 
 
 if __name__ == "__main__":
-    cholect50_path = "data/CholecT50"
-    save_path = ""
+    cholect50_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/CholecT50"
+    save_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/custom_cholec_combined/train"
     prepare_cholect50(cholect50_path, save_path)
-    
-    test_path = ""
+
+    test_path = "/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/custom_cholec_combined/test"
     create_testset(save_path, test_path)
 

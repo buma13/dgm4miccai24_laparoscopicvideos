@@ -134,7 +134,7 @@ def log_validation(vae, text_encoder, tokenizer, unet, controlnet, args, acceler
         images = []
 
         for _ in range(args.num_validation_images):
-            with torch.autocast("cuda"):
+            with torch.autocast(""):
                 image = pipeline(
                     validation_prompt, validation_image, num_inference_steps=150, generator=generator, height=args.resolution, width=args.resolution
                 ).images[0]
@@ -286,7 +286,7 @@ def parse_args(input_args=None):
         action="store_true",
         help="Unfreeze UNet to train alongside ControlNet",
     )
-    
+
     parser.add_argument(
         "--output_dir",
         type=str,
@@ -730,16 +730,16 @@ def make_train_dataset(args, tokenizer, accelerator):
     )
 
     def preprocess_train(examples):
-    
+
         images = [image.convert("RGB") for image in examples[image_column]]
         images = [image_transforms(image) for image in images]
-        
+
         conditioning_images = [image.convert(
             "RGB") for image in examples[conditioning_image_column]]
         conditioning_images = [conditioning_image_transforms(
             image) for image in conditioning_images]
 
-    
+
         examples["pixel_values"] = images
         examples["conditioning_pixel_values"] = conditioning_images
         examples["input_ids"] = tokenize_captions(examples)
@@ -757,17 +757,17 @@ def make_train_dataset(args, tokenizer, accelerator):
 
 
 def collate_fn(examples):
-    
+
     if args.random_rotate:
         for idx,example in enumerate(examples):
             deg = random.choice([0,90,-90,180])
             #deg = random.randint(-180,180)
             img = TF.rotate(example["pixel_values"], deg)
             cond = TF.rotate(example["conditioning_pixel_values"], deg)
-            
+
             examples[idx]["pixel_values"] = img
             examples[idx]["conditioning_pixel_values"] = cond
-    
+
     pixel_values = torch.stack([example["pixel_values"]
                                for example in examples])
     pixel_values = pixel_values.to(
@@ -782,10 +782,10 @@ def collate_fn(examples):
     #     if random.choice([0, 1]):
     #         examples[idx]["input_ids"] = torch.tensor([49406] + 76*[49407])
     #     #examples[idx]["input_ids"] = torch.tensor([49406] + 1*[49407])
-            
+
     input_ids = torch.stack([example["input_ids"] for example in examples])
 
-        
+
     return {
         "pixel_values": pixel_values,
         "conditioning_pixel_values": conditioning_pixel_values,
@@ -1103,8 +1103,8 @@ def main(args):
     for epoch in range(first_epoch, args.num_train_epochs):
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(controlnet):
-                # Convert images to latent space                    
-                    
+                # Convert images to latent space
+
                 latents = vae.encode(batch["pixel_values"].to(
                     dtype=weight_dtype)).latent_dist.sample()
                 latents = latents * vae.config.scaling_factor

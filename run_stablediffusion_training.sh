@@ -1,19 +1,19 @@
-export MODEL_NAME="runwayml/stable-diffusion-v1-5"
+export MODEL_NAME="stable-diffusion-v1-5/stable-diffusion-v1-5"
 
 ### CholecT50 runs
-export TRAIN_DIR="<training dataset directory>"
-export OUTPUT_DIR="<path to save resulting SD model>"
+export TRAIN_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/custom_cholec_combined/train"
+export OUTPUT_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/StableDiffusion"
 export RUN_NAME="SD_laparoscopic"
 export EPOCHS=10
 export LR=1e-5
 
-accelerate launch models/train_text_to_image.py \
+accelerate launch model_scripts/train_text_to_image.py \
   --run_name=$RUN_NAME \
   --pretrained_model_name_or_path=$MODEL_NAME \
   --train_data_dir=$TRAIN_DIR \
   --resolution=128 \
   --train_batch_size=128 \
-  --dataloader_num_workers=16 \
+  --dataloader_num_workers=2 \
   --use_ema \
   --gradient_checkpointing \
   --unfreeze_text_encoder \

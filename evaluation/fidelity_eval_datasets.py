@@ -15,7 +15,7 @@ from torchvision import transforms
 def build_fid_datasets(model_paths, data_path, dest_path, num_inference_steps, guidance_scale, checkpoint_steps=None, epoch_steps=None):
     # sample 10.000 images and their prompts from the real dataset and save them
     metadata = pd.read_csv(os.path.join(data_path, "metadata.csv"))
-    
+
     prompts = metadata["text"].tolist()
     prompt_chunks = [prompts[i:i + 500] for i in range(0, len(prompts), 500)]
 
@@ -33,8 +33,8 @@ def build_fid_datasets(model_paths, data_path, dest_path, num_inference_steps, g
         fake_img_list = []
         for chunk in prompt_chunks:
             pipe = StableDiffusionPipeline.from_pretrained(
-                "runwayml/stable-diffusion-v1-5", unet=unet, text_encoder=text_encoder, tokenizer=tokenizer, safety_checker=None, requires_safety_checker=False)
-            pipe.to("cuda:2")
+                "stable-diffusion-v1-5/stable-diffusion-v1-5", unet=unet, text_encoder=text_encoder, tokenizer=tokenizer, safety_checker=None, requires_safety_checker=False)
+            pipe.to("2")
             images = pipe(prompt=chunk, num_inference_steps=num_inference_steps, guidance_scale=guidance_scale,
                           height=128, width=128).images
             for idx, image in enumerate(images):
@@ -44,15 +44,15 @@ def build_fid_datasets(model_paths, data_path, dest_path, num_inference_steps, g
 
         fake_images = torch.stack(fake_img_list)
 
-    
+
         if checkpoint_steps:
             model_name = str(checkpoint_steps//epoch_steps)+model.split("/")[-2]
         else:
             model_name = model.split("/")[-1]
-            
+
         save_path = os.path.join(
             dest_path, model_name, f"{num_inference_steps}_{guidance_scale}")
-        
+
         if not (os.path.isdir(save_path)):
             os.makedirs(save_path)
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     model_paths = [] # list of paths of StableDiffusion models to evaluate
     testset_path = "" # path to testset with metadata.csv
     dest_path = "" # path to save destination
-    
+
     guidance_scale = 3
     num_inference_steps = 100
 
