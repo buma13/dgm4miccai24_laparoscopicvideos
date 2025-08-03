@@ -1,7 +1,13 @@
 
 export MODEL_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/StableDiffusion"
 export OUTPUT_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/ControlNet"
-export TRAIN_DIR="<training dataset directory>"
+export TRAIN_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/datasets/controlnet"
+
+if [ "$TRAIN_DIR" = "<training dataset directory>" ] || [ ! -d "$TRAIN_DIR" ]; then
+  echo "Error: TRAIN_DIR is not set to a valid directory (current: $TRAIN_DIR)"
+  echo "Please edit run_controlnet_training.sh and set TRAIN_DIR to your dataset path."
+  exit 1
+fi
 
 accelerate launch model_scripts/train_controlnet.py \
  --pretrained_model_name_or_path=$MODEL_DIR \

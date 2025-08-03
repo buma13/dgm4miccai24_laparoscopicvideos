@@ -25,7 +25,6 @@ import random
 import shutil
 from pathlib import Path
 
-import random
 import torchvision.transforms.functional as TF
 import accelerate
 import numpy as np
@@ -36,14 +35,13 @@ import transformers
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import ProjectConfiguration, set_seed
-from datasets import load_dataset
+from datasets import Features, Image as DsImage, Value, load_dataset
 from huggingface_hub import create_repo, upload_folder
 from packaging import version
 from PIL import Image
 from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import AutoTokenizer, PretrainedConfig
-import torchvision.transforms.functional as TF
 
 import diffusers
 from diffusers import (
@@ -134,7 +132,7 @@ def log_validation(vae, text_encoder, tokenizer, unet, controlnet, args, acceler
         images = []
 
         for _ in range(args.num_validation_images):
-            with torch.autocast(""):
+            with torch.autocast(accelerator.device.type):
                 image = pipeline(
                     validation_prompt, validation_image, num_inference_steps=150, generator=generator, height=args.resolution, width=args.resolution
                 ).images[0]
@@ -647,8 +645,18 @@ def make_train_dataset(args, tokenizer, accelerator):
         )
     else:
         if args.train_data_dir is not None:
+            data_files = {"train": os.path.join(args.train_data_dir, "train.jsonl")}
+            features = Features(
+                {
+                    "image": DsImage(),
+                    "text": Value("string"),
+                    "conditioning_image": DsImage(),
+                }
+            )
             dataset = load_dataset(
-                args.train_data_dir,
+                "json",
+                data_files=data_files,
+                features=features,
                 cache_dir=args.cache_dir,
             )
         # See more about loading custom images at
