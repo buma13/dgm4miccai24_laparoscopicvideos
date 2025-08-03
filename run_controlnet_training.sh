@@ -1,7 +1,7 @@
 
 export MODEL_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/StableDiffusion"
 export OUTPUT_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/models/ControlNet"
-export TRAIN_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/datasets/controlnet"
+export TRAIN_DIR="/mnt/projects/mlmi/dmcaf_laparoscopic/dataset/controlnet"
 
 if [ "$TRAIN_DIR" = "<training dataset directory>" ] || [ ! -d "$TRAIN_DIR" ]; then
   echo "Error: TRAIN_DIR is not set to a valid directory (current: $TRAIN_DIR)"

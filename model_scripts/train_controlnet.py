@@ -646,11 +646,14 @@ def make_train_dataset(args, tokenizer, accelerator):
     else:
         if args.train_data_dir is not None:
             data_files = {"train": os.path.join(args.train_data_dir, "train.jsonl")}
+            # Store image paths as strings and resolve them manually later. This
+            # allows using datasets whose image paths are relative to the
+            # training directory.
             features = Features(
                 {
-                    "image": DsImage(),
+                    "image": Value("string"),
                     "text": Value("string"),
-                    "conditioning_image": DsImage(),
+                    "conditioning_image": Value("string"),
                 }
             )
             dataset = load_dataset(
@@ -739,11 +742,14 @@ def make_train_dataset(args, tokenizer, accelerator):
 
     def preprocess_train(examples):
 
-        images = [image.convert("RGB") for image in examples[image_column]]
+        def resolve_path(p):
+            return p if os.path.isabs(p) else os.path.join(args.train_data_dir, p)
+
+        images = [Image.open(resolve_path(p)).convert("RGB") for p in examples[image_column]]
         images = [image_transforms(image) for image in images]
 
-        conditioning_images = [image.convert(
-            "RGB") for image in examples[conditioning_image_column]]
+        conditioning_images = [Image.open(resolve_path(p)).convert("RGB")
+                                for p in examples[conditioning_image_column]]
         conditioning_images = [conditioning_image_transforms(
             image) for image in conditioning_images]
 
