@@ -1151,16 +1151,20 @@ def main(args):
                 )
 
                 # Predict the noise residual
-                model_pred = unet(
-                    noisy_latents,
-                    timesteps,
-                    encoder_hidden_states=encoder_hidden_states,
-                    down_block_additional_residuals=[
-                        sample.to(dtype=weight_dtype) for sample in down_block_res_samples
-                    ],
-                    mid_block_additional_residual=mid_block_res_sample.to(
-                        dtype=weight_dtype),
-                ).sample
+                unet_context = (
+                    torch.no_grad() if not args.unfreeze_unet else contextlib.nullcontext()
+                )
+                with unet_context:
+                    model_pred = unet(
+                        noisy_latents,
+                        timesteps,
+                        encoder_hidden_states=encoder_hidden_states,
+                        down_block_additional_residuals=[
+                            sample.to(dtype=weight_dtype) for sample in down_block_res_samples
+                        ],
+                        mid_block_additional_residual=mid_block_res_sample.to(
+                            dtype=weight_dtype),
+                    ).sample
 
                 # Get the target for loss depending on the prediction type
                 if noise_scheduler.config.prediction_type == "epsilon":
